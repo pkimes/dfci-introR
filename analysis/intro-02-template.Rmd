@@ -1,0 +1,277 @@
+---
+title: "R Basics (part 2)"
+author: "Your Name"
+output: html_document
+---
+
+## Introduction
+
+We will be covering a few basic _R_ commands in this document as an
+introduction to the language and using the RStudio development environment.
+This is a [Rmarkdown](https://rmarkdown.rstudio.com) document that includes
+both markdown (text) and code chunks. 
+
+## Basic Commands
+
+Performing addition in _R_ is straightforward.
+
+```{r}
+3 + 5
+```
+
+We can also assign values to variables using `<-`.
+
+```{r}
+x1 <- 100
+x1
+```
+
+To create ranges of integer values, use `:`.
+
+```{r}
+x2 <- 1:7
+x2
+```
+
+Alternatively, we can call the `seq()` function to create a sequence of
+values between a start and end value, with values offset by a specified
+value.
+
+```{r}
+xSkip <- seq(1, 7, by = 2)
+xSkip
+```
+
+Most _R_ functions come with great (or at least some) documentation that
+can be easily accessed from the console. For example, if we need some
+help with the `seq()` function from above, we can call either of the
+following commands.
+
+```{r, eval = FALSE}
+?seq
+help(seq)
+```
+
+Notice that `xSkip` is a vector of values. To access a subset of the range,
+use the `[A:B]` notation. 
+
+```{r}
+xSkip[2:3]
+```
+
+Unlike many other programming languages, indexing in _R_ is 1-based
+(and not 0-based). This means that the first entry in the vector is
+`b[1]` and not `b[0]` (which is undefined).
+
+Vectors can be constructed using `c()`. 
+
+```{r}
+xvec <- c(2, 9, 1, 8, 2)
+xvec
+
+yvec <- c("a", "b", "c", "d", "e")
+yvec
+```
+
+All elements in vector must be of the same type. Let's see what
+happens when we try to create a vector with both numbers and letters.
+
+```{r}
+c("a", "b", 3, 4, "e")
+```
+
+_R_ converted our numbers to characters!
+
+Aside from numbers and characters, the _R_ language also includes a
+special **factor** type. Factors are ordered vector of "labels" that
+(for statisticians) intuitively translate to levels in an experimental
+design.
+
+```{r}
+fvec <- factor(c("apple", "grape", "apple", "apple"),
+               levels = c("grape", "apple"))
+fvec
+```
+
+While factors look like character strings, **they're not**! This is a
+common pitfall when starting off in _R_. We can pull out the factor
+levels with the `levels()` function.
+
+```{r}
+levels(fvec)
+```
+
+If we have factors but need characters, we can change the type
+by calling `as.character()`.
+
+```{r}
+as.character(fvec)
+```
+
+Finally, let's talk about _data.frames_, how tabular data is stored
+and organized in _R_. Start by creating a new data.frame with two
+columns, `someLetters` and `someNumbers` with the following code.
+
+```{r}
+df <- data.frame(someLetters = yvec,
+                 someNumbers = xvec)
+df
+```
+
+There are a couple different ways to access columns in the data.frame.
+
+```{r}
+df$someLetters
+df[, "someLetters"]
+df[, 1]
+```
+
+Interesting! Notice how our column is a factor. This is a little surprising
+since `yvec` was a vector of characters.
+
+For historical reasons, by default, character columns in data.frames are
+turned into factors in _R_. We can disable this when creating the data.frame
+by specifying the `stringsAsFactors=` parameter.
+
+```{r}
+df <- data.frame(someLetters = yvec,
+                 someNumbers = xvec,
+                 stringsAsFactors = FALSE)
+df$someLetters
+```
+
+Great! Now we're comfortable with some of the major data types used in _R_
+for data science. (We've skipped matrices in the interest of time,
+but make sure to read about these when you get a chance!)
+
+Here are a few other useful commands when getting started with _R_.
+
+To see what variables we have defined in our _R_ session, call `ls()`.
+
+```{r}
+ls()
+```
+
+The following command is used to install a new package
+(**this only needs to be done once and when updating**).
+
+```{r, eval = FALSE}
+install.packages("NewPackageIWant")
+```
+
+Whenever we open up _R_ in a new _session_ and need a package,
+we will need to load the package with `library()`.
+
+```{r, eval = FALSE}
+library("NewPackageIWant")
+```
+
+
+## Example Analysis
+
+We will now walk through an example analysis using a dataset that
+we've included in the `data` folder as a `CSV` file.
+
+Let's read in the data.
+
+```{r}
+## use read.csv() to read data and store as 'dat'
+
+```
+
+Next, let's take a look at the data.
+
+```{r}
+## call the object to print out the content
+
+```
+
+Let's go over a few more basic commands to see what the data
+looks like.
+
+```{r}
+## use head() to see top rows of table
+
+
+## use dim() to check dimensions of table
+
+```
+
+Interesting! Let's take a closer look at the `type` column.
+
+```{r}
+## use $ to pull out the 'type' column
+
+
+## use table() to tabulate the 'type' column
+
+```
+
+It looks like we have a balanced set of observations from
+two groups. Let's take a look at the `measurement` column.
+
+```{r}
+## use summary() to summarize the 'measurement' column
+
+```
+
+Let's create a boxplot of the data for the two groups.
+
+```{r}
+## use boxplot() to create a boxplot
+
+```
+
+Boxplots are a great visualization tool, but they can sometimes
+summarize the data too much. Let's actually plot the data.
+
+```{r}
+## use boxplot() and points() to create a boxplot
+
+
+```
+
+It looks like we have outliers! Let's drop them.
+
+```{r}
+## remove outliers using [, ] to subset rows
+
+```
+
+Let's replot the data.
+
+```{r}
+## use boxplot() and points() to create a boxplot
+
+
+```
+
+It looks like the data might be heavy-tailed.
+We can also take a look at the data after log2-transforming
+the `measurement` values.
+
+```{r}
+## use log2 to transform the 'measurement' column and replot
+boxplot(log2(measurement) ~ type, data = dat)
+points(log2(measurement) ~ type, data = dat)
+```
+
+Depending on what `measurement` represents, it may be better
+to move forward with our analysis using the log2-transformed
+values.
+
+```{r}
+## use $ and <- to replace the 'measurement' column
+
+```
+
+Be careful not to run the above code more than once!
+
+Finally, we can run a simple t-test with the `t.test()`.
+
+```{r}
+## use t.test to perform a two sample t-test
+
+```
+
+When we're done, try `knit`ing this document to see what you get!
